@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>ファイル符号化＆複合ツール（.txt .js .json対応）</title>
+</head>
+<body>
+  <h1>ファイル符号化＆複合ツール（+2ずらし）</h1>
+
+  <h2>符号化（ファイル内のテキスト → 数値+2）</h2>
+  <input type="file" id="encodeFileInput" accept=".txt,.js,.json" />
+  <button onclick="encodeFile()">符号化実行</button>
+  <pre id="encodeOutput" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; max-height:200px; overflow:auto;"></pre>
+
+  <h2>複合（ファイル内の数値列 → アルファベット）</h2>
+  <input type="file" id="decodeFileInput" accept=".txt,.js,.json" />
+  <button onclick="decodeFile()">複合実行</button>
+  <pre id="decodeOutput" style="white-space: pre-wrap; border: 1px solid #ccc; padding: 10px; max-height:200px; overflow:auto;"></pre>
+
+  <script>
+    function encodeFile() {
+      const fileInput = document.getElementById("encodeFileInput");
+      const output = document.getElementById("encodeOutput");
+
+      if (fileInput.files.length === 0) {
+        alert("符号化するファイルを選択してください");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const text = e.target.result.toUpperCase();
+        const result = [];
+
+        for (const char of text) {
+          if (char >= "A" && char <= "Z") {
+            const num = char.charCodeAt(0) - 64; // A=1
+            result.push(num + 2); // +2ずらす
+          } else if (char === " " || char === "\n" || char === "\r") {
+            result.push(" ");
+          } else {
+            // 他の文字は無視（必要なら？にしてもOK）
+          }
+        }
+
+        output.textContent = result.join(" ");
+      };
+
+      reader.onerror = function () {
+        alert("符号化ファイル読み込みでエラーが発生しました");
+      };
+
+      reader.readAsText(file);
+    }
+
+    function decodeFile() {
+      const fileInput = document.getElementById("decodeFileInput");
+      const output = document.getElementById("decodeOutput");
+
+      if (fileInput.files.length === 0) {
+        alert("複合するファイルを選択してください");
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const reader = new FileReader();
+
+      reader.onload = function (e) {
+        const text = e.target.result.trim();
+        // 数値と空白を分割
+        const parts = text.split(/\s+/);
+        let result = "";
+
+        for (const part of parts) {
+          if (!isNaN(part)) {
+            const num = parseInt(part) - 2; // -2戻す
+            if (num >= 1 && num <= 26) {
+              result += String.fromCharCode(num + 64); // 1→A
+            } else {
+              result += "?"; // 範囲外は?
+            }
+          } else if (part === "") {
+            result += " ";
+          } else {
+            result += "?"; // 数値以外は?
+          }
+        }
+
+        output.textContent = result;
+      };
+
+      reader.onerror = function () {
+        alert("複合ファイル読み込みでエラーが発生しました");
+      };
+
+      reader.readAsText(file);
+    }
+  </script>
+</body>
+</html>

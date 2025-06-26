@@ -1,0 +1,45 @@
+{
+  "manifest_version": 3,
+  "name": "YT & Global Adblocker",
+  "version": "0.1",
+  "description": "Block YouTube and major global ad domains via dynamic declarativeNetRequest rules",
+  "permissions": [
+    "declarativeNetRequest",
+    "storage"
+  ],
+  "host_permissions": [
+    "*://*.youtube.com/*",
+    "*://*.googlevideo.com/*",
+    "*://*.doubleclick.net/*",
+    "*://*.googlesyndication.com/*",
+    "*://*.adservice.google.com/*",
+    "*://*.adservice.google.co.jp/*",
+    "*://*.ads.yahoo.com/*",
+    "*://*.ads.twitter.com/*",
+    "*://*.ads.facebook.com/*",
+    "*://*.ads.linkedin.com/*",
+    "*://*.ads.reddit.com/*",
+    "*://*.adroll.com/*",
+    "*://*.rubiconproject.com/*",
+    "*://*.openx.net/*",
+    "*://*.appnexus.com/*",
+    "*://*.facebook.net/*"
+  ],
+  "background": {
+    "service_worker": "background/service_worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.youtube.com/*"],
+      "js": ["content_scripts/adblocker.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "action": {
+    "default_title": "YT & Global Adblocker"
+  },
+  "icons": {
+    "48": "icons/icon48.png"
+  }
+}
